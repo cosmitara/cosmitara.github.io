@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmitara · Tarot & Astrology Readings</title>
+<meta name="description" content="Personal tarot and astrology readings by Cosmitara. Ask your question, share your birth details, and get a written reading made just for you.">
+<meta name="theme-color" content="#120922">
+<meta property="og:title" content="Cosmitara · Tarot & Astrology Readings">
+<meta property="og:description" content="Pick a card for today, or ask the cards your own question.">
+<meta property="og:image" content="assets/logo.png">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<header class="top">
+  <a class="brand" href="#top" aria-label="Cosmitara home">
+    <img src="assets/logo.png" alt="" width="40" height="40">
+    <span>Cosmitara</span>
+  </a>
+  <nav aria-label="Main">
+    <a href="#readings">Readings</a>
+    <a href="#how">How it works</a>
+    <a href="#faq">FAQ</a>
+    <a class="nav-cta" href="#request">Request a reading</a>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- HERO: pick a card -->
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Ask the cards what your heart already knows.</h1>
+      <p class="lede">Personal tarot and astrology readings, written for your question and your birth chart, and sent to you <span data-delivery>within 48 hours</span>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#request">Request a reading</a>
+        <a class="btn btn-ghost" href="#readings">See prices</a>
+      </div>
+    </div>
+
+    <div class="draw" aria-labelledby="draw-title">
+      <p id="draw-title" class="draw-title">Pick one card for today</p>
+      <div class="fan" role="group" aria-label="Three face-down tarot cards">
+        <button class="tcard" data-i="0" aria-label="Pick the left card"><span class="tcard-inner"><span class="face back"></span><span class="face front"></span></span></button>
+        <button class="tcard" data-i="1" aria-label="Pick the middle card"><span class="tcard-inner"><span class="face back"></span><span class="face front"></span></span></button>
+        <button class="tcard" data-i="2" aria-label="Pick the right card"><span class="tcard-inner"><span class="face back"></span><span class="face front"></span></span></button>
+      </div>
+      <div class="draw-result" aria-live="polite">
+        <p class="draw-msg"></p>
+        <p class="draw-more" hidden>Want to go deeper? <a href="#request">Ask the cards your own question.</a> <button class="link-btn" id="reshuffle">Shuffle again</button></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- READINGS -->
+  <section id="readings" class="readings">
+    <div class="section-head">
+      <h2>Choose your reading</h2>
+      <p>The number of cards matches the number of questions you ask. Every reading is written by hand, never auto-generated.</p>
+    </div>
+    <div class="plans" id="plans"><!-- filled by app.js --></div>
+  </section>
+
+  <!-- HOW IT WORKS (a real sequence) -->
+  <section id="how" class="how">
+    <h2>How a reading works</h2>
+    <ol class="steps">
+      <li><h3>Pick your reading</h3><p>Quick Insight, Two Questions, or a Detailed Reading.</p></li>
+      <li><h3>Share your question</h3><p>Add your name, date of birth and what's on your mind. Birth time and place make astrology more accurate, but they're optional.</p></li>
+      <li><h3>Pay by UPI</h3><p>Scan the QR or tap to pay in any UPI app, then paste your transaction ID.</p></li>
+      <li><h3>Receive your reading</h3><p>Your cards and their message arrive by email or Instagram DM <span data-delivery>within 48 hours</span>.</p></li>
+    </ol>
+  </section>
+
+  <!-- REQUEST FORM -->
+  <section id="request" class="request">
+    <div class="section-head">
+      <h2>Request your reading</h2>
+      <p>Takes about three minutes. Everything you share stays between you and Cosmitara.</p>
+    </div>
+
+    <form id="readingForm" class="rform" novalidate>
+      <ol class="progress" aria-label="Form progress">
+        <li class="is-active" data-step-dot="1">Reading</li>
+        <li data-step-dot="2">About you</li>
+        <li data-step-dot="3">Your questions</li>
+        <li data-step-dot="4">Payment</li>
+      </ol>
+
+      <!-- honeypot -->
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off">
+
+      <!-- STEP 1 -->
+      <fieldset class="step is-active" data-step="1">
+        <legend>Which reading would you like?</legend>
+        <div class="plan-pick" id="planPick"><!-- filled by app.js --></div>
+        <div class="step-nav"><span></span><button type="button" class="btn btn-gold" data-next>Continue</button></div>
+      </fieldset>
+
+      <!-- STEP 2 -->
+      <fieldset class="step" data-step="2">
+        <legend>A little about you</legend>
+        <div class="grid">
+          <label class="field"><span class="lab">Full name</span><input name="name" autocomplete="name" required></label>
+          <label class="field"><span class="lab">Email</span><input name="email" type="email" autocomplete="email" required><small>Your reading is sent here.</small></label>
+          <label class="field"><span class="lab">Instagram handle <em>optional</em></span><input name="instagram" placeholder="@yourname"></label>
+          <label class="field"><span class="lab">Date of birth</span><input name="dob" type="date" required></label>
+          <label class="field"><span class="lab">Time of birth <em>optional</em></span><input name="birth_time" type="time"><small>Even an approximate time helps.</small></label>
+          <label class="field"><span class="lab">Place of birth <em>optional</em></span><input name="birth_place" placeholder="City, State"></label>
+          <label class="field"><span class="lab">What is this about?</span><select name="focus" id="focus" required>
+              <option value="">Choose one</option>
+              <option>Love & relationships</option>
+              <option>Career & purpose</option>
+              <option>Self-growth & healing</option>
+              <option>Family & friendships</option>
+              <option>General guidance</option>
+            </select>
+          </label>
+          <label class="field"><span class="lab">Send my reading by</span><select name="delivery" required>
+              <option>Email</option>
+              <option>Instagram DM</option>
+            </select>
+          </label>
+        </div>
+        <div class="partner" id="partner" hidden>
+          <p class="partner-note">Is your question about someone specific? Their details help, if you know them.</p>
+          <div class="grid">
+            <label class="field"><span class="lab">Their name <em>optional</em></span><input name="partner_name"></label>
+            <label class="field"><span class="lab">Their date of birth <em>optional</em></span><input name="partner_dob" type="date"></label>
+          </div>
+        </div>
+        <div class="step-nav"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-gold" data-next>Continue</button></div>
+      </fieldset>
+
+      <!-- STEP 3 -->
+      <fieldset class="step" data-step="3">
+        <legend>Your <span id="qCountWord">question</span></legend>
+        <p class="hint">Open questions get the richest answers. Try "What do I need to know about…" rather than yes/no.</p>
+        <div id="questions"><!-- filled by app.js --></div>
+        <label class="field"><span class="lab">Anything else you'd like me to know? <em>optional</em></span><textarea name="context" rows="3"></textarea></label>
+        <div class="step-nav"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-gold" data-next>Continue to payment</button></div>
+      </fieldset>
+
+      <!-- STEP 4 -->
+      <fieldset class="step" data-step="4">
+        <legend>Pay and send</legend>
+        <div class="pay">
+          <div class="pay-qr">
+            <div id="qr" class="qr" role="img" aria-label="UPI payment QR code"></div>
+            <a id="upiLink" class="btn btn-gold pay-app" href="#">Pay in UPI app</a>
+          </div>
+          <div class="pay-info">
+            <p class="pay-amount"><span id="payPlan">Quick Insight</span><strong id="payPrice">₹99</strong></p>
+            <p>Scan with GPay, PhonePe, Paytm or any UPI app.</p>
+            <p class="upi-row">UPI ID <code id="upiId">cosmitara@nyes</code> <button type="button" class="link-btn" id="copyUpi">Copy</button></p>
+            <label class="field"><span class="lab">UPI transaction ID</span><input name="utr" inputmode="numeric" required placeholder="12-digit UTR / reference number"><small>Find it in your UPI app under payment details.</small></label>
+          </div>
+        </div>
+        <label class="consent"><input type="checkbox" name="consent" required> <span>I'm 18 or older, and I understand readings are for reflection and guidance. They aren't medical, legal or financial advice.</span></label>
+        <p class="form-error" id="formError" role="alert" hidden></p>
+        <div class="step-nav"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="submit" class="btn btn-gold" id="sendBtn">Send my request</button></div>
+      </fieldset>
+
+      <!-- DONE -->
+      <div class="done" id="done" hidden tabindex="-1">
+        <h3>Request sent. The cards are being drawn.</h3>
+        <p>Your reading will reach you <span data-delivery>within 48 hours</span>. If anything about your payment needs checking, Cosmitara will message you first.</p>
+        <a class="btn btn-ghost" href="#top">Back to the top</a>
+      </div>
+    </form>
+
+    <p class="alt-form" id="altForm" hidden>Prefer Google Forms? <a id="gformLink" href="#" target="_blank" rel="noopener">Fill in the same request there.</a></p>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq">
+    <h2>Questions people ask</h2>
+    <details><summary>Is a reading a prediction?</summary><p>No. Tarot and astrology show the energy around a situation and help you see your options clearly. Your choices still shape what happens.</p></details>
+    <details><summary>What can I ask about?</summary><p>Love, relationships, career direction, self-growth, family, and anything you need clarity on. I don't read on health, legal cases or money and investments. Please speak to a professional for those.</p></details>
+    <details><summary>Do I need my birth time?</summary><p>It's optional. Your date of birth is enough for a tarot reading. Birth time and place let me add your rising sign and more astrology detail.</p></details>
+    <details><summary>How will I receive it?</summary><p>By email or Instagram DM, whichever you choose. You get the cards drawn and a written message for each question.</p></details>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-brand">
+    <img src="assets/logo.png" alt="" width="48" height="48">
+    <p>Cosmitara<br><span>Cosmic guidance, one card at a time.</span></p>
+  </div>
+  <ul class="socials">
+    <li><a data-instagram href="#" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a data-youtube href="#" target="_blank" rel="noopener">YouTube</a></li>
+    <li><a data-email href="#">Email</a></li>
+  </ul>
+  <p class="disclaimer">Readings are for reflection and entertainment and do not replace professional medical, legal or financial advice.</p>
+  <p class="copy">© <span id="year"></span> Cosmitara</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="assets/qr.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
