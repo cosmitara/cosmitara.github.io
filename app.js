@@ -84,14 +84,13 @@
   const fmt = n => "₹" + n;
   const qWord = n => (n === 1 ? "1 question" : `${n} questions`);
   $("#plans").innerHTML = C.plans.map((p, i) => `
-    <article class="plan${i === 2 ? " is-featured" : ""}">
-      ${i === 2 ? '<span class="ribbon">Most complete</span>' : ""}
+    <article class="plan">
       <div class="spread" aria-hidden="true">${"<i></i>".repeat(p.questions)}</div>
       <h3>${p.name}</h3>
       <p class="meta">${qWord(p.questions)}</p>
       <p>${p.blurb}</p>
       <div class="price">${fmt(p.price)}</div>
-      <a class="btn ${i === 2 ? "btn-gold" : "btn-ghost"}" href="#request" data-choose="${p.id}">Choose ${p.name}</a>
+      <a class="btn btn-gold" href="#request" data-choose="${p.id}">Choose ${p.name}</a>
     </article>`).join("");
 
   $("#planPick").innerHTML = C.plans.map((p, i) => `

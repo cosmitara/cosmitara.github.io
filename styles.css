@@ -56,11 +56,13 @@ h3 { font-size: 1.35rem; }
 .top nav { display: flex; align-items: center; gap: clamp(0.8rem, 2vw, 1.8rem); font-size: 0.92rem; }
 .top nav a { color: var(--mist); text-decoration: none; }
 .top nav a:hover { color: var(--moon); }
-.top nav .nav-cta { color: var(--ink); background: var(--gold); padding: 0.45rem 1rem; border-radius: 999px; font-weight: 600; }
+.top nav .nav-cta { white-space: nowrap; color: var(--ink); background: var(--gold); padding: 0.45rem 1rem; border-radius: 999px; font-weight: 600; }
 .top nav .nav-cta:hover { background: #ffd99c; color: var(--ink); }
 @media (max-width: 760px) {
   .top nav a:not(.nav-cta) { display: none; }
   .brand span { font-size: 1.25rem; }
+  .top nav .nav-cta { padding: 0.45rem 0.85rem; font-size: 0.85rem; }
+  .brand img { width: 34px; height: 34px; }
 }
 
 /* ---------- buttons ---------- */
@@ -68,7 +70,7 @@ h3 { font-size: 1.35rem; }
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 48px; padding: 0.7rem 1.5rem;
   border-radius: 999px; font: 600 1rem var(--body);
-  text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  text-decoration: none; cursor: pointer; border: 1px solid transparent; white-space: nowrap;
   transition: background-color .2s, color .2s, border-color .2s;
 }
 .btn-gold { background: var(--gold); color: var(--ink); }
@@ -150,8 +152,7 @@ main > section { padding: clamp(3.5rem, 8vw, 6.5rem) clamp(1rem, 5vw, 3rem); max
   background: linear-gradient(170deg, #2a1550cc, #160b2bcc);
   border: 1px solid var(--line);
 }
-.plan.is-featured { border-color: var(--gold); background: linear-gradient(170deg, #3d1f6c, #1c0e37); }
-.plan .ribbon { position: absolute; top: -0.8rem; right: 1.2rem; background: var(--gold); color: var(--ink); font-size: .78rem; font-weight: 600; padding: .2rem .7rem; border-radius: 999px; }
+.plan .btn { width: 100%; }
 .spread { display: flex; gap: 6px; height: 64px; align-items: flex-end; margin-bottom: 1.4rem; }
 .spread i { width: 30px; height: 50px; border-radius: 5px; border: 1.5px solid var(--gold); background: linear-gradient(160deg, #4a2780, #2a1449); }
 .spread i:nth-child(odd) { transform: translateY(-8px); }
