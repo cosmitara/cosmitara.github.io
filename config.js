@@ -25,7 +25,10 @@ window.COSMITARA = {
     { id: "two",      name: "Two Questions",    questions: 2, price: 99,  was: 149,
       blurb: "Two questions, read together, so you see how one part of your life is touching the other." },
     { id: "detailed", name: "Detailed Reading", questions: 5, price: 199, was: 299,
-      blurb: "Up to five questions with your birth details woven in. The full picture of where you are right now." }
+      blurb: "Up to five questions with your birth details woven in. The full picture of where you are right now." },
+    // Not shown in the price cards; offered after the free Yes/No wheel.
+    { id: "yesno",    name: "Yes/No Reading",   questions: 1, price: 39, home: false,
+      blurb: "One yes/no question, answered personally: the card, the answer, and what it means for you." }
   ],
 
   /*

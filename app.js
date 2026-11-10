@@ -58,7 +58,7 @@
     { name: "The High Priestess", num: "II", glyph: "☽", tint: "#a9b7ff", msg: "The answer is inside you. Listen before you ask anyone else." }
   ];
   if ($(".fan")) {
-  const fan = $(".fan"), cards = $$(".tcard"), msg = $(".draw-msg"), more = $(".draw-more");
+  const fan = $(".fan"), cards = $$(".fan .tcard"), msg = $(".draw-msg"), more = $(".draw-more");
   let hand = [];
   function deal() {
     hand = DECK.slice().sort(() => Math.random() - 0.5).slice(0, 3);
@@ -86,7 +86,7 @@
 
   /* ---------- reading plans (home) ---------- */
   const plansEl = $("#plans");
-  if (plansEl) plansEl.innerHTML = C.plans.map(p => `
+  if (plansEl) plansEl.innerHTML = C.plans.filter(p => p.home !== false).map(p => `
     <article class="plan">
       <div class="spread" aria-hidden="true">${"<i></i>".repeat(p.questions)}</div>
       <h3>${p.name}</h3>
@@ -96,6 +96,77 @@
       <div class="price">${was(p)}${fmt(p.price)}</div>
       <a class="btn btn-gold" href="book.html?plan=${p.id}">Book ${p.name}</a>
     </article>`).join("");
+
+  /* ---------- yes/no wheel (home) ---------- */
+  const wheelSvg = $("#wheel");
+  if (wheelSvg) {
+    const YN = {
+      yes: { label: "Yes", answer: "Yes.", cards: [
+        { name: "The Sun", num: "XIX", glyph: "☀︎", tint: "#ffc35a", msg: "The energy around this is bright and open. Move toward it with confidence." },
+        { name: "The Star", num: "XVII", glyph: "★", tint: "#8cc8ff", msg: "Hope is well placed here. Things are quietly lining up in your favour." },
+        { name: "The World", num: "XXI", glyph: "❂", tint: "#8de0b4", msg: "This one comes full circle. Trust that it's moving toward completion." },
+        { name: "The Magician", num: "I", glyph: "✦", tint: "#ffd27a", msg: "You have what it takes to make this happen. Take the first step." } ] },
+      no: { label: "No", answer: "No, not like this.", cards: [
+        { name: "The Tower", num: "XVI", glyph: "⚡︎", tint: "#ff8a4c", msg: "Something needs to shift before this can work. Don't force it." },
+        { name: "Five of Cups", num: "CUPS", glyph: "☁︎", tint: "#9fb3ff", msg: "This path holds more disappointment than joy right now. Look at what's still standing." },
+        { name: "Eight of Swords", num: "SWORDS", glyph: "⚔︎", tint: "#d0c4ff", msg: "Not this way. You have more choices than it feels like. Step back and look again." } ] },
+      wait: { label: "Not yet", answer: "Not yet.", cards: [
+        { name: "The Moon", num: "XVIII", glyph: "☾", tint: "#b6c0ff", msg: "It's not clear yet. Wait for more information before you decide." },
+        { name: "The Hanged Man", num: "XII", glyph: "◐", tint: "#c9a8ff", msg: "Pause. Seeing this from a new angle will give you your answer." },
+        { name: "Wheel of Fortune", num: "X", glyph: "☸︎", tint: "#e6b8ff", msg: "The timing is still turning. Ask again when things settle." } ] }
+    };
+    const SEG = ["yes", "no", "wait", "yes", "no", "yes", "wait", "no"];
+    const N = SEG.length, step = 360 / N;
+    const fill = { yes: "#efc27a", no: "#3b1f64", wait: "#6a3f9e" };
+    const ink = { yes: "#120922", no: "#f5ecdd", wait: "#f5ecdd" };
+    const pt = (deg, r) => { const t = (deg - 90) * Math.PI / 180; return [(r * Math.cos(t)).toFixed(2), (r * Math.sin(t)).toFixed(2)]; };
+    wheelSvg.innerHTML = SEG.map((k, i) => {
+      const a0 = i * step, a1 = a0 + step, [x0, y0] = pt(a0, 100), [x1, y1] = pt(a1, 100), [tx, ty] = pt(a0 + step / 2, 66);
+      return `<path d="M0 0 L${x0} ${y0} A100 100 0 0 1 ${x1} ${y1} Z" fill="${fill[k]}" stroke="#efc27a" stroke-width="1.2"/>
+        <text x="${tx}" y="${ty}" fill="${ink[k]}" font-size="${k === "wait" ? 11 : 13}" font-family="Poppins, sans-serif" font-weight="600"
+          text-anchor="middle" dominant-baseline="middle" transform="rotate(${a0 + step / 2} ${tx} ${ty})">${YN[k].label}</text>`;
+    }).join("") + `<circle r="104" fill="none" stroke="#efc27a" stroke-width="3"/>` +
+      Array.from({ length: N }, (_, i) => { const [x, y] = pt(i * step, 104); return `<circle cx="${x}" cy="${y}" r="2.6" fill="#ffe2a8"/>`; }).join("");
+
+    const ynForm = $("#ynForm"), q = $("#ynQ"), btn = $("#ynSpin"), res = $("#ynResult"), card = $(".yn-card"), err = $("#ynErr");
+    const yesnoPlan = C.plans.find(p => p.id === "yesno");
+    if (yesnoPlan) $("#ynPrice").textContent = fmt(yesnoPlan.price);
+    let angle = 0, spinning = false;
+    ynForm.addEventListener("submit", e => {
+      e.preventDefault();
+      if (spinning) return;
+      const question = q.value.trim();
+      if (!question) { err.hidden = false; q.focus(); return; }
+      err.hidden = true;
+      // draw a card uniformly, then land on a segment that matches its answer
+      const all = Object.entries(YN).flatMap(([k, g]) => g.cards.map(c => ({ k, c })));
+      const pick = all[Math.floor(Math.random() * all.length)];
+      const slots = SEG.map((k, i) => (k === pick.k ? i : -1)).filter(i => i >= 0);
+      const slot = slots[Math.floor(Math.random() * slots.length)];
+      const jitter = (Math.random() - 0.5) * step * 0.6;
+      const target = 360 - (slot * step + step / 2) + jitter;          // segment centre under the top pointer
+      angle = angle - (angle % 360) + 360 * 5 + target;
+      spinning = true; btn.disabled = true; res.hidden = true; card.classList.remove("is-chosen");
+      wheelSvg.style.transition = reduceMotion ? "none" : "transform 4.2s cubic-bezier(.12,.7,.16,1)";
+      wheelSvg.style.transform = `rotate(${angle}deg)`;
+      setTimeout(() => {
+        const f = $("#ynFront");
+        f.style.setProperty("--tint", pick.c.tint);
+        f.innerHTML = `<span class="num">${pick.c.num}</span><span class="glyph" aria-hidden="true">${pick.c.glyph}</span><span class="name">${pick.c.name}</span>`;
+        $("#ynAsked").textContent = `“${question}”`;
+        $("#ynAnswer").innerHTML = `<span>${pick.c.name}</span> ${YN[pick.k].answer}`;
+        $("#ynMsg").textContent = pick.c.msg;
+        $("#ynBook").href = `book.html?plan=yesno&q=${encodeURIComponent(question)}`;
+        res.hidden = false; res.classList.add("is-shown");
+        requestAnimationFrame(() => card.classList.add("is-chosen"));
+        if (window.innerWidth < 900) res.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+        spinning = false; btn.disabled = false; btn.textContent = "Spin again";
+      }, reduceMotion ? 50 : 4300);
+    });
+    $("#ynAgain").addEventListener("click", () => {
+      res.hidden = true; card.classList.remove("is-chosen"); q.value = ""; btn.textContent = "Spin the wheel"; q.focus();
+    });
+  }
 
   /* ---------- reviews (home) ---------- */
   const reviewEl = $("#reviewList");
@@ -122,7 +193,8 @@
   $("#upiId").textContent = C.upiId;
   if (C.googleFormUrl) { $("#altForm").hidden = false; $("#gformLink").href = C.googleFormUrl; }
 
-  const wanted = new URLSearchParams(location.search).get("plan");
+  const params = new URLSearchParams(location.search);
+  const wanted = params.get("plan");
   const startId = C.plans.some(p => p.id === wanted) ? wanted : C.plans[0].id;
   const pick = $("#planPick");
   pick.innerHTML = C.plans.map(p => `
@@ -155,14 +227,19 @@
   /* ---------- questions ---------- */
   const qBox = $("#questions");
   const saved = {};
+  if (params.get("q")) saved.q1 = params.get("q").slice(0, 300);
   function buildQuestions() {
     $$("textarea", qBox).forEach(t => (saved[t.name] = t.value));
-    const n = plan().questions;
-    $("#qCountWord").textContent = n === 1 ? "question" : `${n} questions`;
+    const n = plan().questions, isYN = plan().id === "yesno";
+    $("#qCountWord").textContent = isYN ? "yes/no question" : n === 1 ? "question" : `${n} questions`;
+    const hint = $("#qHint");
+    if (hint) hint.textContent = isYN
+      ? "Ask one clear yes/no question. You'll get the card drawn, the answer, and what it means for you."
+      : 'Open questions get the richest answers. Try "What do I need to know about…" rather than yes/no.';
     qBox.innerHTML = Array.from({ length: n }, (_, i) => `
       <label class="field"><span class="lab">${n === 1 ? "Your question" : `Question ${i + 1}`}${i > 0 && n === 5 ? " <em>optional</em>" : ""}</span>
         <textarea name="q${i + 1}" rows="3" ${i === 0 || n === 2 ? "required" : ""}
-          placeholder="${["What do I need to know about…", "What energy surrounds…", "How can I move forward with…", "What is blocking me from…", "What should I focus on in…"][i]}">${saved["q" + (i + 1)] || ""}</textarea>
+          placeholder="${isYN ? "Should I… ? Will… ? Is it the right time to… ?" : ["What do I need to know about…", "What energy surrounds…", "How can I move forward with…", "What is blocking me from…", "What should I focus on in…"][i]}">${esc(saved["q" + (i + 1)] || "")}</textarea>
       </label>`).join("");
   }
 

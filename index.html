@@ -26,6 +26,7 @@
   </a>
   <nav aria-label="Main">
     <a href="#readings">Readings</a>
+    <a href="#yesno">Yes/No</a>
     <a href="#how">How it works</a>
     <a href="#reviews">Reviews</a>
     <a href="#faq">FAQ</a>
@@ -66,6 +67,43 @@
       <p>The number of cards matches the number of questions you ask. Every reading is written by hand, never auto-generated.</p>
     </div>
     <div class="plans" id="plans"><!-- filled by app.js --></div>
+  </section>
+
+  <!-- YES / NO WHEEL -->
+  <section id="yesno" class="yesno">
+    <div class="yn-copy">
+      <h2>Ask the Yes/No wheel</h2>
+      <p>Hold one question in your mind, type it in, and spin. The wheel draws a card, and the card gives its answer.</p>
+      <form id="ynForm" class="yn-form" novalidate>
+        <label class="field" for="ynQ"><span class="lab">Your yes/no question</span>
+          <input id="ynQ" name="ynq" maxlength="140" autocomplete="off" placeholder="Should I message them first?">
+        </label>
+        <p class="yn-err" id="ynErr" role="alert" hidden>Type your question first. The wheel answers what you ask.</p>
+        <button class="btn btn-gold" id="ynSpin" type="submit">Spin the wheel</button>
+      </form>
+      <p class="yn-note">Free, for fun and reflection. For health, legal or money decisions, please talk to a professional.</p>
+    </div>
+
+    <div class="yn-stage">
+      <div class="wheel-wrap" aria-hidden="true">
+        <span class="wheel-pointer"></span>
+        <svg id="wheel" class="wheel" viewBox="-110 -110 220 220"></svg>
+        <span class="wheel-hub"></span>
+      </div>
+      <div class="yn-result" id="ynResult" hidden tabindex="-1" aria-live="polite">
+        <div class="tcard yn-card"><span class="tcard-inner"><span class="face back"></span><span class="face front" id="ynFront"></span></span></div>
+        <div class="yn-text">
+          <p class="yn-asked" id="ynAsked"></p>
+          <p class="yn-answer" id="ynAnswer"></p>
+          <p class="yn-msg" id="ynMsg"></p>
+          <div class="yn-upsell">
+            <p>Want to know why, and what to do next? Get a personal Yes/No reading, written by Cosmitara and sent <span data-delivery>within 24 hours</span>.</p>
+            <a class="btn btn-gold" id="ynBook" href="book.html?plan=yesno">Get my answer for <span id="ynPrice">₹39</span></a>
+            <button type="button" class="link-btn" id="ynAgain">Ask another question</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- HOW IT WORKS (a real sequence) -->
