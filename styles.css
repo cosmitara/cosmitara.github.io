@@ -323,7 +323,7 @@ details p { color: var(--mist); margin: 0 0 1.2rem; max-width: 64ch; }
 .review .stars { margin: 0; color: var(--gold); letter-spacing: .15em; font-size: 1.1rem; }
 .review blockquote { margin: 0; font-family: var(--display); font-size: 1.2rem; line-height: 1.45; color: var(--moon); }
 .review figcaption { color: var(--mist); font-size: .9rem; margin-top: auto; }
-.review figcaption span { color: var(--gold); }
+.review figcaption span { color: var(--mist); }
 .review-empty { grid-column: 1 / -1; max-width: 640px; padding: 1.8rem; border: 1px dashed var(--line); border-radius: 18px; }
 .review-empty p { margin: 0 0 1.2rem; color: var(--mist); }
 
