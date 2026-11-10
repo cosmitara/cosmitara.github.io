@@ -168,23 +168,36 @@
     });
   }
 
-  /* ---------- reviews (home) ---------- */
+  /* ---------- reviews (home): slow drifting rows ---------- */
   const reviewEl = $("#reviewList");
   if (reviewEl) {
     const list = (C.reviews || []).filter(r => r && r.text);
-    reviewEl.innerHTML = list.length
-      ? list.map(r => {
-          const n = Math.max(1, Math.min(5, r.stars || 5));
-          return `<figure class="review">
-            <p class="stars" aria-label="${n} out of 5 stars">${"★".repeat(n)}${"☆".repeat(5 - n)}</p>
-            <blockquote>${esc(r.text)}</blockquote>
-            <figcaption>${esc(r.name || "Anonymous")}${r.reading ? ` · <span>${esc(r.reading)}</span>` : ""}</figcaption>
-          </figure>`;
-        }).join("")
-      : `<div class="review-empty">
+    const cardHtml = (r, hidden) => {
+      const n = Math.max(1, Math.min(5, r.stars || 5));
+      return `<figure class="review"${hidden ? ' aria-hidden="true"' : ""}>
+        <p class="stars" aria-label="${n} out of 5 stars">${"★".repeat(n)}${"☆".repeat(5 - n)}</p>
+        <blockquote>${esc(r.text)}</blockquote>
+        <figcaption>${esc(r.name || "Anonymous")}${r.country ? ` <span class="country">(${esc(r.country)})</span>` : ""}${r.reading ? ` · <span>${esc(r.reading)}</span>` : ""}</figcaption>
+      </figure>`;
+    };
+    if (!list.length) {
+      reviewEl.innerHTML = `<div class="review-empty">
           <p>Cosmitara is new, and the first reviews are on their way. Had a reading? Your words help the next person decide.</p>
           <a class="btn btn-ghost" href="${C.instagram}" target="_blank" rel="noopener">Share your experience on Instagram</a>
         </div>`;
+    } else {
+      // two rows once there are enough reviews, otherwise one
+      const rows = list.length >= 4 ? [list.filter((_, i) => i % 2 === 0), list.filter((_, i) => i % 2 === 1)] : [list];
+      reviewEl.classList.add("review-marquee");
+      reviewEl.innerHTML = rows.map((row, ri) => {
+        // repeat the set until one copy is wider than a wide screen, then double it for a seamless loop
+        const reps = Math.max(1, Math.ceil(1500 / (row.length * 360)));
+        const once = Array.from({ length: reps }, (_, k) => row.map(r => cardHtml(r, k > 0)).join("")).join("");
+        const dupe = Array.from({ length: reps }, () => row.map(r => cardHtml(r, true)).join("")).join("");
+        const secs = Math.round(row.length * reps * 14);   // ~14s per card: slow, like drifting clouds
+        return `<div class="mq-row${ri ? " mq-rev" : ""}"><div class="mq-track" style="--dur:${secs}s">${once}${dupe}</div></div>`;
+      }).join("");
+    }
   }
 
   /* ---------- booking page ---------- */
