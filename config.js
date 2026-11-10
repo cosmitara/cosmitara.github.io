@@ -11,18 +11,30 @@ window.COSMITARA = {
   upiId: "cosmitara@nyes",
   payeeName: "Cosmitara",
   web3formsKey: "YOUR_WEB3FORMS_ACCESS_KEY",
-  googleFormUrl: "",
+  googleFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSf8PXhcuBirXuzwEpY7NV-cO2MG7tffSALTwPfMd9-vZGcQRA/viewform",
   instagram: "https://instagram.com/cosmitara",
   youtube: "https://youtube.com/@cosmitara",
   email: "cosmitara@gmail.com",
-  deliveryTime: "within 48 hours",
+  deliveryTime: "within 24 hours",
 
+  // "was" = regular price shown crossed out during the launch offer. Delete it to hide the strike-through.
+  offerLabel: "Launch offer",
   plans: [
-    { id: "quick",    name: "Quick Insight",    questions: 1, price: 99,
+    { id: "quick",    name: "Quick Insight",    questions: 1, price: 79,  was: 99,
       blurb: "One clear question, one focused spread. Good for a single decision or a feeling you can't shake." },
-    { id: "two",      name: "Two Questions",    questions: 2, price: 149,
+    { id: "two",      name: "Two Questions",    questions: 2, price: 99,  was: 149,
       blurb: "Two questions, read together, so you see how one part of your life is touching the other." },
-    { id: "detailed", name: "Detailed Reading", questions: 5, price: 299,
+    { id: "detailed", name: "Detailed Reading", questions: 5, price: 199, was: 299,
       blurb: "Up to five questions with your birth details woven in. The full picture of where you are right now." }
+  ],
+
+  /*
+    Reviews: add real ones only, from people who agreed to be quoted.
+    Copy the example below, fill it in, and remove the // at the start of each line.
+    Until there is at least one review, the site shows an invite to share one.
+  */
+  reviews: [
+    // { name: "Priya S.", reading: "Detailed Reading", stars: 5,
+    //   text: "Paste what they wrote here, in their own words." },
   ]
 };

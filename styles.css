@@ -287,3 +287,42 @@ details p { color: var(--mist); margin: 0 0 1.2rem; max-width: 64ch; }
   .draw-result { min-height: 3rem; margin-top: 1.2rem; }
   .hero { padding-bottom: 2rem !important; }
 }
+
+/* launch offer pricing */
+.was { font-family: var(--body); font-size: .5em; color: #c9bcd9aa; text-decoration-thickness: 2px; text-decoration-color: var(--rose); margin-right: .25em; vertical-align: middle; }
+.plan-opt .amt { white-space: nowrap; }
+.plan-opt .amt .was { font-size: .55em; }
+.offer { align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--ink); background: var(--gold); padding: .15rem .65rem; border-radius: 999px; margin-bottom: .6rem; }
+
+/* booking page */
+.book { padding-top: clamp(2rem, 5vw, 3.5rem) !important; }
+.book .section-head h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
+.top nav .nav-back { color: var(--moon); text-decoration: none; border-bottom: 1px solid var(--line); }
+.top nav .nav-back::before { content: "‹ "; color: var(--gold); }
+@media (max-width: 760px) { .top nav a.nav-back { display: inline; } }
+.chosen {
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: .4rem 1.2rem;
+  padding: 1rem 1.2rem; margin-bottom: 1rem;
+  border: 1px solid var(--gold); border-radius: 14px; background: #efc27a12;
+}
+.chosen p { margin: 0; }
+.chosen-label { font-size: .8rem; color: var(--mist); }
+.chosen-name b { font-weight: 600; font-size: 1.05rem; }
+.chosen-name span { display: block; color: var(--mist); font-size: .88rem; }
+.chosen-price { font-family: var(--display); font-size: 1.7rem; color: var(--gold); white-space: nowrap; }
+.chosen-price .was { font-size: .55em; }
+@media (max-width: 520px) {
+  .chosen { grid-template-columns: 1fr auto; }
+  .chosen-change { grid-column: 1 / -1; justify-self: start; }
+}
+.rform > .plan-pick { margin-bottom: 1.6rem; }
+
+/* reviews */
+.review-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+.review { margin: 0; padding: 1.6rem; border-radius: 18px; border: 1px solid var(--line); background: linear-gradient(170deg, #2a1550cc, #160b2bcc); display: flex; flex-direction: column; gap: .9rem; }
+.review .stars { margin: 0; color: var(--gold); letter-spacing: .15em; font-size: 1.1rem; }
+.review blockquote { margin: 0; font-family: var(--display); font-size: 1.2rem; line-height: 1.45; color: var(--moon); }
+.review figcaption { color: var(--mist); font-size: .9rem; margin-top: auto; }
+.review figcaption span { color: var(--gold); }
+.review-empty { grid-column: 1 / -1; max-width: 640px; padding: 1.8rem; border: 1px dashed var(--line); border-radius: 18px; }
+.review-empty p { margin: 0 0 1.2rem; color: var(--mist); }

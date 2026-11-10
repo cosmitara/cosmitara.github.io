@@ -16,19 +16,19 @@ function createCosmitaraForm() {
   const form = FormApp.create('Cosmitara · Request a Reading');
   form.setDescription(
     'Personal tarot & astrology readings by Cosmitara ✨\n\n' +
-    '• Quick Insight — 1 question — ₹99\n' +
-    '• Two Questions — 2 questions — ₹149\n' +
-    '• Detailed Reading — up to 5 questions — ₹299\n\n' +
-    'Your reading is sent by email or Instagram DM within 48 hours of payment. ' +
+    '• Quick Insight — 1 question — ₹79 (regular ₹99)\n' +
+    '• Two Questions — 2 questions — ₹99 (regular ₹149)\n' +
+    '• Detailed Reading — up to 5 questions — ₹199 (regular ₹299)\n\n' +
+    'Your reading is sent by email or Instagram DM within 24 hours of payment. ' +
     'Readings are for reflection and guidance, not medical, legal or financial advice.'
   );
   form.setProgressBar(true);
-  form.setConfirmationMessage('Request sent. The cards are being drawn 🌙 Your reading will reach you within 48 hours.');
+  form.setConfirmationMessage('Request sent. The cards are being drawn 🌙 Your reading will reach you within 24 hours.');
 
   // ---- Section 1: reading + about you
   form.addMultipleChoiceItem()
     .setTitle('Which reading would you like?')
-    .setChoiceValues(['Quick Insight (1 question) — ₹99', 'Two Questions — ₹149', 'Detailed Reading (up to 5 questions) — ₹299'])
+    .setChoiceValues(['Quick Insight (1 question) — ₹79', 'Two Questions — ₹99', 'Detailed Reading (up to 5 questions) — ₹199'])
     .setRequired(true);
 
   form.addTextItem().setTitle('Full name').setRequired(true);
@@ -39,7 +39,7 @@ function createCosmitaraForm() {
   form.addTimeItem().setTitle('Time of birth').setHelpText('Optional. Even an approximate time helps.');
   form.addTextItem().setTitle('Place of birth').setHelpText('Optional. City, State');
   form.addMultipleChoiceItem().setTitle('What is this about?')
-    .setChoiceValues(['Love & relationships', 'Career & purpose', 'Self-growth & healing', 'Family & friendships', 'General guidance'])
+    .setChoiceValues(['Love & relationships', 'Career & purpose', 'Self-growth & healing', 'Family & friendships', 'General guidance', 'Other'])
     .setRequired(true);
   form.addTextItem().setTitle("Other person's name and date of birth")
     .setHelpText('Optional. Only if your question is about someone specific.');

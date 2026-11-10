@@ -12,8 +12,10 @@
   $$("[data-email]").forEach(a => (a.href = "mailto:" + C.email));
   $$("[data-delivery]").forEach(s => (s.textContent = C.deliveryTime));
   $("#year").textContent = new Date().getFullYear();
-  $("#upiId").textContent = C.upiId;
-  if (C.googleFormUrl) { $("#altForm").hidden = false; $("#gformLink").href = C.googleFormUrl; }
+  const esc = s => String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+  const fmt = n => "₹" + n;
+  const was = p => (p.was ? `<s class="was" aria-label="Regular price ${fmt(p.was)}">${fmt(p.was)}</s> ` : "");
+  const qWord = n => (n === 1 ? "1 question" : `${n} questions`);
 
   /* ---------- starfield ---------- */
   const sky = $("#sky"), ctx = sky.getContext("2d");
@@ -55,6 +57,7 @@
     { name: "Wheel of Fortune", num: "X", glyph: "☸︎", tint: "#c9a8ff", msg: "Life is turning. Stay open to the surprise in it." },
     { name: "The High Priestess", num: "II", glyph: "☽", tint: "#a9b7ff", msg: "The answer is inside you. Listen before you ask anyone else." }
   ];
+  if ($(".fan")) {
   const fan = $(".fan"), cards = $$(".tcard"), msg = $(".draw-msg"), more = $(".draw-more");
   let hand = [];
   function deal() {
@@ -79,35 +82,75 @@
   }));
   $("#reshuffle").addEventListener("click", deal);
   deal();
+  }
 
-  /* ---------- reading plans ---------- */
-  const fmt = n => "₹" + n;
-  const qWord = n => (n === 1 ? "1 question" : `${n} questions`);
-  $("#plans").innerHTML = C.plans.map((p, i) => `
+  /* ---------- reading plans (home) ---------- */
+  const plansEl = $("#plans");
+  if (plansEl) plansEl.innerHTML = C.plans.map(p => `
     <article class="plan">
       <div class="spread" aria-hidden="true">${"<i></i>".repeat(p.questions)}</div>
       <h3>${p.name}</h3>
       <p class="meta">${qWord(p.questions)}</p>
       <p>${p.blurb}</p>
-      <div class="price">${fmt(p.price)}</div>
-      <a class="btn btn-gold" href="#request" data-choose="${p.id}">Choose ${p.name}</a>
+      ${p.was && C.offerLabel ? `<span class="offer">${C.offerLabel}</span>` : ""}
+      <div class="price">${was(p)}${fmt(p.price)}</div>
+      <a class="btn btn-gold" href="book.html?plan=${p.id}">Book ${p.name}</a>
     </article>`).join("");
 
-  $("#planPick").innerHTML = C.plans.map((p, i) => `
+  /* ---------- reviews (home) ---------- */
+  const reviewEl = $("#reviewList");
+  if (reviewEl) {
+    const list = (C.reviews || []).filter(r => r && r.text);
+    reviewEl.innerHTML = list.length
+      ? list.map(r => {
+          const n = Math.max(1, Math.min(5, r.stars || 5));
+          return `<figure class="review">
+            <p class="stars" aria-label="${n} out of 5 stars">${"★".repeat(n)}${"☆".repeat(5 - n)}</p>
+            <blockquote>${esc(r.text)}</blockquote>
+            <figcaption>${esc(r.name || "Anonymous")}${r.reading ? ` · <span>${esc(r.reading)}</span>` : ""}</figcaption>
+          </figure>`;
+        }).join("")
+      : `<div class="review-empty">
+          <p>Cosmitara is new, and the first reviews are on their way. Had a reading? Your words help the next person decide.</p>
+          <a class="btn btn-ghost" href="${C.instagram}" target="_blank" rel="noopener">Share your experience on Instagram</a>
+        </div>`;
+  }
+
+  /* ---------- booking page ---------- */
+  const form = $("#readingForm");
+  if (!form) return;
+  $("#upiId").textContent = C.upiId;
+  if (C.googleFormUrl) { $("#altForm").hidden = false; $("#gformLink").href = C.googleFormUrl; }
+
+  const wanted = new URLSearchParams(location.search).get("plan");
+  const startId = C.plans.some(p => p.id === wanted) ? wanted : C.plans[0].id;
+  const pick = $("#planPick");
+  pick.innerHTML = C.plans.map(p => `
     <label class="plan-opt">
-      <input type="radio" name="plan" value="${p.id}" ${i === 0 ? "checked" : ""}>
+      <input type="radio" name="plan" value="${p.id}" ${p.id === startId ? "checked" : ""}>
       <span class="dot" aria-hidden="true"></span>
       <span><b>${p.name}</b><span class="sub">${qWord(p.questions)}</span></span>
-      <span class="amt">${fmt(p.price)}</span>
+      <span class="amt">${was(p)}${fmt(p.price)}</span>
     </label>`).join("");
-
-  const form = $("#readingForm");
-  const plan = () => C.plans.find(p => p.id === form.plan.value) || C.plans[0];
-
-  $$("[data-choose]").forEach(a => a.addEventListener("click", () => {
-    const r = form.querySelector(`input[name="plan"][value="${a.dataset.choose}"]`);
-    if (r) { r.checked = true; go(1); }
-  }));
+  const plan = () => C.plans.find(p => p.id === (form.querySelector('input[name="plan"]:checked') || {}).value) || C.plans[0];
+  function showChosen() {
+    const p = plan();
+    $("#chosenName").textContent = p.name;
+    $("#chosenMeta").textContent = qWord(p.questions);
+    $("#chosenPrice").innerHTML = was(p) + fmt(p.price);
+  }
+  const changeBtn = $("#changePlan");
+  changeBtn.addEventListener("click", () => {
+    const open = pick.hidden;
+    pick.hidden = !open; changeBtn.setAttribute("aria-expanded", String(open));
+    changeBtn.textContent = open ? "Done" : "Change";
+  });
+  pick.addEventListener("change", () => {
+    showChosen();
+    if (step === 2) buildQuestions();
+    if (step === 3) buildPay();
+    pick.hidden = true; changeBtn.setAttribute("aria-expanded", "false"); changeBtn.textContent = "Change";
+  });
 
   /* ---------- questions ---------- */
   const qBox = $("#questions");
@@ -151,11 +194,12 @@
 
   /* ---------- steps ---------- */
   let step = 1;
+  showChosen();
   const steps = $$(".step"), dots = $$(".progress li");
   function go(n) {
     step = n;
-    if (n === 3) buildQuestions();
-    if (n === 4) buildPay();
+    if (n === 2) buildQuestions();
+    if (n === 3) buildPay();
     steps.forEach(s => s.classList.toggle("is-active", +s.dataset.step === n));
     dots.forEach(d => {
       const k = +d.dataset.stepDot;
@@ -164,7 +208,7 @@
     });
     const active = steps[n - 1];
     const first = active.querySelector("input:not([type=radio]), select, textarea");
-    if (n > 1 && first) first.focus({ preventScroll: true });
+    if (first) first.focus({ preventScroll: true });
     form.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
@@ -213,7 +257,7 @@
   /* ---------- submit ---------- */
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    if (!validStep(4)) return;
+    if (!validStep(3)) return;
     const err = $("#formError"); err.hidden = true;
     if (!configured(C.web3formsKey, "YOUR_")) {
       err.textContent = "This form isn't connected yet. Add your Web3Forms key in config.js, or message Cosmitara on Instagram.";
@@ -243,7 +287,7 @@
       const out = await res.json().catch(() => ({}));
       if (!res.ok || out.success === false) throw new Error(out.message || res.status);
       steps.forEach(s => s.classList.remove("is-active"));
-      $(".progress").hidden = true;
+      $(".progress").hidden = true; $("#chosen").hidden = true; pick.hidden = true;
       const done = $("#done"); done.hidden = false; done.focus();
     } catch (x) {
       err.textContent = "Your request didn't go through. Check your connection and try again, or send it on Instagram.";
