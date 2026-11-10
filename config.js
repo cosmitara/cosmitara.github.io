@@ -41,7 +41,7 @@ window.COSMITARA = {
     //   text: "Paste what they wrote here, in their own words." },
     { name: "Thao My", country: "China", stars: 5,
       text: "I am absolutely blown away by how accurate my reading was! Every single card pulled resonated so deeply with what I am currently going through in my life right now." },
-    { name: "Yuktha", country: "India", reading: "Yes/No Reading", stars: 5,
+    { name: "Yuktha", country: "India", stars: 5,
       text: "I was incredibly stressed out over a tough situation and desperately needed some quick guidance. I decided to try their Yes/No reading feature, and it was exactly what I needed. The answer was direct, clear, and provided immediate comfort." },
     { name: "Ananya", country: "India", stars: 5,
       text: "I was feeling completely stuck regarding my career path, but this reading gave me the exact push I needed." },
